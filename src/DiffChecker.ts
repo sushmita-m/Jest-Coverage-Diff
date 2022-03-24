@@ -81,10 +81,6 @@ export class DiffChecker {
       const fileRemovedCoverage = Object.values(diffCoverageData).every(
         coverageData => coverageData.newPct === 0
       )
-      // eslint-disable-next-line no-console
-      console.log(
-        `Print a single environment variable ${file}${fileRemovedCoverage}`
-      )
       if (fileRemovedCoverage) {
         // since the file is deleted don't include in delta calculation
         continue

@@ -2056,8 +2056,7 @@ function run() {
             }
             child_process_1.execSync(commandToRun);
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
-            // eslint-disable-next-line no-console
-            console.log(`Print a single environment variable ${codeCoverageOld} ${codeCoverageNew}`);
+            core.info(`Print a single environment variable ${codeCoverageOld} ${codeCoverageNew}`);
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
@@ -6780,8 +6779,6 @@ class DiffChecker {
             const keys = Object.keys(diffCoverageData);
             // No new coverage found so that means we deleted a file coverage
             const fileRemovedCoverage = Object.values(diffCoverageData).every(coverageData => coverageData.newPct === 0);
-            // eslint-disable-next-line no-console
-            console.log(`Print a single environment variable ${file}${fileRemovedCoverage}`);
             if (fileRemovedCoverage) {
                 // since the file is deleted don't include in delta calculation
                 continue;
