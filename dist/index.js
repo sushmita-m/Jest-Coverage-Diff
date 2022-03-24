@@ -6805,6 +6805,8 @@ class DiffChecker {
                 continue;
             }
             for (const key of keys) {
+                core.info(`sush ${key}`);
+                core.info(`sush ${diffCoverageData[key].oldPct}`);
                 if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
                     const deltaToCompareWith = file === 'total' && totalDelta !== null ? totalDelta : delta;
                     if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith) {
