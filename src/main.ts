@@ -45,7 +45,10 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-    - run: echo " Print a single environment variable ${{codeCoverageOld}} ${{codeCoverageNew}}"
+    // eslint-disable-next-line no-console
+    console.log(
+      `Print a single environment variable ${codeCoverageOld} ${codeCoverageNew}`
+    )
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()

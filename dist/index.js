@@ -2033,6 +2033,7 @@ function run() {
             const commandToRun = core.getInput('runCommand');
             const commandAfterSwitch = core.getInput('afterSwitchCommand');
             const delta = Number(core.getInput('delta'));
+            const rawTotalDelta = core.getInput('total_delta');
             const githubClient = github.getOctokit(githubToken);
             const prNumber = github.context.issue.number;
             const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
@@ -2040,6 +2041,10 @@ function run() {
             const useSameComment = JSON.parse(core.getInput('useSameComment'));
             const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
             const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
+            let totalDelta = null;
+            if (rawTotalDelta !== null) {
+                totalDelta = Number(rawTotalDelta);
+            }
             let commentId = null;
             child_process_1.execSync(commandToRun);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
@@ -2051,6 +2056,8 @@ function run() {
             }
             child_process_1.execSync(commandToRun);
             const codeCoverageOld = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
+            // eslint-disable-next-line no-console
+            console.log(`Print a single environment variable ${codeCoverageOld} ${codeCoverageNew}`);
             const currentDirectory = child_process_1.execSync('pwd')
                 .toString()
                 .trim();
@@ -2064,7 +2071,7 @@ function run() {
             }
             else {
                 messageToPost +=
-                    'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
+                    'Statuses | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
                 messageToPost += coverageDetails.join('\n');
             }
             messageToPost = `${commentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`;
@@ -2073,7 +2080,7 @@ function run() {
             }
             yield createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber);
             // check if the test coverage is falling below delta/tolerance.
-            if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta)) {
+            if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
                 if (useSameComment) {
                     commentId = yield findComment(githubClient, repoName, repoOwner, prNumber, deltaCommentIdentifier);
                 }
@@ -6766,20 +6773,23 @@ class DiffChecker {
         }
         return returnStrings;
     }
-    checkIfTestCoverageFallsBelowDelta(delta) {
-        const keys = Object.keys(this.diffCoverageReport);
-        for (const key of keys) {
-            const diffCoverageData = this.diffCoverageReport[key];
+    checkIfTestCoverageFallsBelowDelta(delta, totalDelta) {
+        const files = Object.keys(this.diffCoverageReport);
+        for (const file of files) {
+            const diffCoverageData = this.diffCoverageReport[file];
             const keys = Object.keys(diffCoverageData);
             // No new coverage found so that means we deleted a file coverage
             const fileRemovedCoverage = Object.values(diffCoverageData).every(coverageData => coverageData.newPct === 0);
+            // eslint-disable-next-line no-console
+            console.log(`Print a single environment variable ${file}${fileRemovedCoverage}`);
             if (fileRemovedCoverage) {
                 // since the file is deleted don't include in delta calculation
                 continue;
             }
             for (const key of keys) {
                 if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
-                    if (-this.getPercentageDiff(diffCoverageData[key]) > delta) {
+                    const deltaToCompareWith = file === 'total' && totalDelta !== null ? totalDelta : delta;
+                    if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith) {
                         return true;
                     }
                 }
