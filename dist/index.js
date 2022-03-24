@@ -6799,7 +6799,7 @@ class DiffChecker {
             const keys = Object.keys(diffCoverageData);
             // No new coverage found so that means we deleted a file coverage
             const fileRemovedCoverage = Object.values(diffCoverageData).every(coverageData => coverageData.newPct === 0);
-            core.info(`${fileRemovedCoverage} ${file}`);
+            core.info(`testing ${fileRemovedCoverage} ${file}`);
             if (fileRemovedCoverage) {
                 // since the file is deleted don't include in delta calculation
                 continue;

@@ -82,7 +82,7 @@ export class DiffChecker {
       const fileRemovedCoverage = Object.values(diffCoverageData).every(
         coverageData => coverageData.newPct === 0
       )
-      core.info(`${fileRemovedCoverage} ${file}`)
+      core.info(`testing ${fileRemovedCoverage} ${file}`)
       if (fileRemovedCoverage) {
         // since the file is deleted don't include in delta calculation
         continue
