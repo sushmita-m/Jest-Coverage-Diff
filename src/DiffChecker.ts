@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import {CoverageReport} from './Model/CoverageReport'
 import {DiffCoverageReport} from './Model/DiffCoverageReport'
 import {CoverageData} from './Model/CoverageData'
@@ -81,6 +82,7 @@ export class DiffChecker {
       const fileRemovedCoverage = Object.values(diffCoverageData).every(
         coverageData => coverageData.newPct === 0
       )
+      core.info(`${fileRemovedCoverage} ${file}`)
       if (fileRemovedCoverage) {
         // since the file is deleted don't include in delta calculation
         continue
