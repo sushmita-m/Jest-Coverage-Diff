@@ -45,6 +45,7 @@ async function run(): Promise<void> {
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
+    - run: echo " Print a single environment variable ${{codeCoverageOld}} ${{codeCoverageNew}}"
     const currentDirectory = execSync('pwd')
       .toString()
       .trim()
@@ -63,7 +64,7 @@ async function run(): Promise<void> {
         'No changes to code coverage between the base branch and the head branch'
     } else {
       messageToPost +=
-        'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n'
+        'Statuses | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n'
       messageToPost += coverageDetails.join('\n')
     }
     messageToPost = `${commentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`
