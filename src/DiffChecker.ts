@@ -81,7 +81,6 @@ export class DiffChecker {
       const fileRemovedCoverage = Object.values(diffCoverageData).every(
         coverageData => coverageData.newPct === 0
       )
-      echo "checking deleted file {{fileRemovedCoverage}} {{file}}"
       if (fileRemovedCoverage) {
         // since the file is deleted don't include in delta calculation
         continue
